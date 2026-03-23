@@ -1,51 +1,37 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
 migrate_working_dir/
 
-# --- FLUTTER/DART PROJECT IGNORE RULES ---
-# Generated/build artifacts
-build/
-.dart_tool/
-.pub/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-coverage/
-
-# IDE/editor files
-.idea/
-.vscode/
+# IntelliJ related
 *.iml
 *.ipr
 *.iws
+.idea/
 
-# System files
-.DS_Store
-*.log
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
 
-# Android secrets/keys
-android/key.properties
-android/app/*.keystore
-android/app/google-services.json
-
-# iOS secrets/keys
-ios/Runner/GoogleService-Info.plist
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-
-# Firebase/Env/Secrets
-*.env
-
-# Symbolication/obfuscation
-app.*.symbols
-app.*.map.json
-
-# Flutter generated docs
+# Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
-
-# Remove old or custom build folders
-.build/
-.buildlog/
-migrate_working_dir/
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
 
 # Symbolication related
 app.*.symbols
@@ -58,10 +44,45 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Image files
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.svg
-*.webp
+# Flutter generated/plugin files
+.flutter-plugins
+.packages
+
+# Flutter platform ephemeral/generated directories
+**/android/local.properties
+**/android/.gradle/
+**/android/captures/
+**/android/**/GeneratedPluginRegistrant.java
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/macos/Flutter/ephemeral/
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+
+# Dart generated
+*.g.dart
+*.freezed.dart
+
+# Local secrets / signing files (keep out of Git)
+**/key.properties
+**/*.jks
+**/*.keystore
+**/*.p12
+**/*.p8
+**/*.pem
+**/*serviceAccount*.json
+**/*credentials*.json
+
+# Environment files
+.env
+.env.*
+*.env
+
+# Accidental chat/clipboard image drops
+**/file.png
+
+# Local Firebase config for this app
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
