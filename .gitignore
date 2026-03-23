@@ -1,0 +1,67 @@
+migrate_working_dir/
+
+# --- FLUTTER/DART PROJECT IGNORE RULES ---
+# Generated/build artifacts
+build/
+.dart_tool/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+coverage/
+
+# IDE/editor files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# System files
+.DS_Store
+*.log
+
+# Android secrets/keys
+android/key.properties
+android/app/*.keystore
+android/app/google-services.json
+
+# iOS secrets/keys
+ios/Runner/GoogleService-Info.plist
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Firebase/Env/Secrets
+*.env
+
+# Symbolication/obfuscation
+app.*.symbols
+app.*.map.json
+
+# Flutter generated docs
+**/doc/api/
+**/ios/Flutter/.last_build_id
+
+# Remove old or custom build folders
+.build/
+.buildlog/
+migrate_working_dir/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Image files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
