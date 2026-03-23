@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownerDoc(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isOwner(data) {
+      return signedIn() && data.shelterUid == request.auth.uid;
+    }
+
+    function ownerUnchanged() {
+      return request.resource.data.shelterUid == resource.data.shelterUid;
+    }
+
+    function isOwnerCreate() {
+      return signedIn() && request.resource.data.shelterUid == request.auth.uid;
+    }
+
+    match /shelter_users/{uid} {
+      allow read, update, delete: if ownerDoc(uid);
+      allow create: if signedIn() && request.auth.uid == uid;
+    }
+
+    match /pets/{petId} {
+      allow read: if isOwner(resource.data);
+      allow create: if isOwnerCreate();
+      allow update: if isOwner(resource.data) && ownerUnchanged();
+      allow delete: if isOwner(resource.data);
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isOwner(resource.data);
+      allow create: if isOwnerCreate();
+      allow update: if isOwner(resource.data) && ownerUnchanged();
+      allow delete: if isOwner(resource.data);
+    }
+
+    match /employees/{employeeId} {
+      allow read: if isOwner(resource.data);
+      allow create: if isOwnerCreate();
+      allow update: if isOwner(resource.data) && ownerUnchanged();
+      allow delete: if isOwner(resource.data);
+    }
+
+    match /shelter_zones/{zoneId} {
+      allow read: if isOwner(resource.data);
+      allow create: if isOwnerCreate();
+      allow update: if isOwner(resource.data) && ownerUnchanged();
+      allow delete: if isOwner(resource.data);
+    }
+  }
+}

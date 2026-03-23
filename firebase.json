@@ -1,0 +1,29 @@
+{
+	"flutter": {
+		"platforms": {
+			"android": {
+				"default": {
+					"projectId": "pawmilya-shelter-management",
+					"appId": "1:542173394191:android:982e112b629c79c6cf7a7a",
+					"fileOutput": "android/app/google-services.json"
+				}
+			},
+			"dart": {
+				"lib/firebase_options.dart": {
+					"projectId": "pawmilya-shelter-management",
+					"configurations": {
+						"android": "1:542173394191:android:982e112b629c79c6cf7a7a",
+						"web": "1:542173394191:web:a08cd32c787531a3cf7a7a"
+					}
+				}
+			}
+		}
+	},
+	"firestore": {
+		"rules": "firestore.rules",
+		"indexes": "firestore.indexes.json"
+	},
+	"storage": {
+		"rules": "storage.rules"
+	}
+}
