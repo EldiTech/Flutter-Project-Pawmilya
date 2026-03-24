@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../models/shelter_zone.dart';
@@ -193,9 +194,9 @@ class _MetricCard extends StatelessWidget {
         children: [
           Icon(icon, color: AppColors.primary),
           const SizedBox(height: 6),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+          Text(title, style: GoogleFonts.quicksand(fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(value, style: GoogleFonts.quicksand(fontSize: 20, fontWeight: FontWeight.bold)),
         ],
       ),
     );

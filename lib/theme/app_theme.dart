@@ -21,11 +21,11 @@ class AppTheme {
   );
 
   static TextStyle get bodyStyle =>
-      GoogleFonts.nunito(color: AppColors.textDark);
+      GoogleFonts.quicksand(color: AppColors.textDark);
 
   static ThemeData get theme => ThemeData(
     scaffoldBackgroundColor: AppColors.warmBg,
-    textTheme: GoogleFonts.nunitoTextTheme(),
+    textTheme: GoogleFonts.quicksandTextTheme(),
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.primary,
       primary: AppColors.primary,

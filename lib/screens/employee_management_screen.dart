@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../models/employee.dart';
@@ -26,15 +27,31 @@ class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
     return Scaffold(
       backgroundColor: AppColors.warmBg,
       appBar: AppBar(
-        title: const Text('Employee Management'),
+        title: Text(
+          'Employee Management',
+          style: GoogleFonts.quicksand(
+            color: AppColors.textDark,
+            fontSize: 26,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.15,
+          ),
+        ),
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 0,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openEmployeeDialog(),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        elevation: 10,
+        extendedPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         icon: const Icon(Icons.add),
-        label: const Text('Add Employee'),
+        label: Text(
+          'Add Employee',
+          style: GoogleFonts.quicksand(fontWeight: FontWeight.w700, fontSize: 17),
+        ),
       ),
       body: Consumer<DashboardProvider>(
         builder: (context, provider, _) {
@@ -50,56 +67,169 @@ class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: AppColors.textMid.withValues(alpha: 0.9),
+                    ),
                     hintText: 'Search employees',
+                    hintStyle: GoogleFonts.quicksand(
+                      color: AppColors.textMuted,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.warmAccent.withValues(alpha: 0.72)),
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.warmAccent.withValues(alpha: 0.72)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.42), width: 1.2),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
                   ),
                   onChanged: (_) => setState(() {}),
                 ),
               ),
               Expanded(
                 child: employees.isEmpty
-                    ? const Center(child: Text('No employees found.'))
+                    ? Center(
+                        child: Text(
+                          'No employees found.',
+                          style: GoogleFonts.quicksand(
+                            color: AppColors.textMuted,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      )
                     : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
                         itemCount: employees.length,
                         itemBuilder: (context, index) {
                           final employee = employees[index];
-                          return Card(
-                            color: Colors.white,
-                            child: ListTile(
-                              title: Text(employee.name),
-                              subtitle: Text(
-                                '${employee.role} • ${employee.dept ?? 'No department'}\n${employee.email ?? 'No email'}',
-                              ),
-                              isThreeLine: true,
-                              trailing: Wrap(
-                                spacing: 6,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  Chip(
-                                    label: Text(employee.status),
-                                    visualDensity: VisualDensity.compact,
+                          final subtitleDepartment = employee.dept?.isNotEmpty == true
+                              ? employee.dept!
+                              : 'No department';
+                          final subtitleEmail = employee.email?.isNotEmpty == true
+                              ? employee.email!
+                              : 'No email';
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 14),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(color: AppColors.warmAccent.withValues(alpha: 0.58)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.textDark.withValues(alpha: 0.07),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 9),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _EmployeeAvatar(name: employee.name),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              employee.name,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.quicksand(
+                                                color: AppColors.textDark,
+                                                fontSize: 38,
+                                                fontWeight: FontWeight.w700,
+                                                height: 0.98,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          _EmployeeStatusBadge(status: employee.status),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        employee.role,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.quicksand(
+                                          color: AppColors.textMuted,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        '• $subtitleDepartment',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.quicksand(
+                                          color: AppColors.textMid,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      Text(
+                                        subtitleEmail,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.quicksand(
+                                          color: AppColors.textMid,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.warmBg,
+                                            borderRadius: BorderRadius.circular(14),
+                                            border: Border.all(
+                                              color: AppColors.warmAccent.withValues(alpha: 0.78),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              _EmployeeActionButton(
+                                                icon: Icons.edit_outlined,
+                                                onTap: () => _openEmployeeDialog(existing: employee),
+                                              ),
+                                              _EmployeeActionButton(
+                                                icon: Icons.delete_outline,
+                                                onTap: () => _deleteEmployee(employee),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  IconButton(
-                                    onPressed: () => _openEmployeeDialog(existing: employee),
-                                    icon: const Icon(Icons.edit_outlined),
-                                  ),
-                                  IconButton(
-                                    onPressed: () => _deleteEmployee(employee),
-                                    icon: const Icon(Icons.delete_outline),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -186,6 +316,101 @@ class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
   }
 }
 
+class _EmployeeAvatar extends StatelessWidget {
+  const _EmployeeAvatar({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final trimmed = name.trim();
+    final initial = trimmed.isEmpty ? '?' : trimmed[0].toUpperCase();
+
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.warmAccent.withValues(alpha: 0.92), width: 1.4),
+      ),
+      child: CircleAvatar(
+        radius: 31,
+        backgroundColor: AppColors.warmAccent.withValues(alpha: 0.43),
+        child: Text(
+          initial,
+          style: GoogleFonts.quicksand(
+            color: AppColors.textDark,
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmployeeStatusBadge extends StatelessWidget {
+  const _EmployeeStatusBadge({required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = status.toLowerCase() == 'active';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: isActive ? AppColors.adoptionGreen.withValues(alpha: 0.14) : AppColors.warmBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isActive
+              ? AppColors.adoptionGreen.withValues(alpha: 0.4)
+              : AppColors.warmAccent.withValues(alpha: 0.85),
+        ),
+        boxShadow: isActive
+            ? [
+                BoxShadow(
+                  color: AppColors.adoptionGreen.withValues(alpha: 0.24),
+                  blurRadius: 10,
+                  spreadRadius: -1,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
+      ),
+      child: Text(
+        status,
+        style: GoogleFonts.quicksand(
+          color: isActive ? AppColors.adoptionGreen.withValues(alpha: 0.95) : AppColors.textMuted,
+          fontSize: 13,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+class _EmployeeActionButton extends StatelessWidget {
+  const _EmployeeActionButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: 36,
+        height: 36,
+        alignment: Alignment.center,
+        child: Icon(icon, size: 22, color: AppColors.textDark),
+      ),
+    );
+  }
+}
+
 class _EmployeeFormData {
   const _EmployeeFormData({
     required this.name,
@@ -217,34 +442,52 @@ class _EmployeeDialog extends StatefulWidget {
 
 class _EmployeeDialogState extends State<_EmployeeDialog> {
   final _formKey = GlobalKey<FormState>();
+  static const List<String> _roleOptions = [
+    'Veterinarian',
+    'Caretaker',
+    'Volunteer',
+    'Admin Staff',
+    'Manager',
+  ];
+  static const List<String> _departmentOptions = [
+    'Administration',
+    'Medical',
+    'Operations',
+    'Adoption',
+  ];
 
   late final TextEditingController _nameController;
-  late final TextEditingController _roleController;
-  late final TextEditingController _deptController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
   late final TextEditingController _dateController;
 
   late String _status;
+  String? _selectedRole;
+  String? _selectedDepartment;
 
   @override
   void initState() {
     super.initState();
     final existing = widget.existing;
     _nameController = TextEditingController(text: existing?.name ?? '');
-    _roleController = TextEditingController(text: existing?.role ?? '');
-    _deptController = TextEditingController(text: existing?.dept ?? '');
     _emailController = TextEditingController(text: existing?.email ?? '');
     _phoneController = TextEditingController(text: existing?.phone ?? '');
     _dateController = TextEditingController(text: existing?.dateHired ?? '');
     _status = existing?.status ?? 'Active';
+    _selectedRole = existing?.role;
+    _selectedDepartment = existing?.dept;
+
+    if (_selectedRole != null && !_roleOptions.contains(_selectedRole)) {
+      _selectedRole = null;
+    }
+    if (_selectedDepartment != null && !_departmentOptions.contains(_selectedDepartment)) {
+      _selectedDepartment = null;
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _roleController.dispose();
-    _deptController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _dateController.dispose();
@@ -271,19 +514,34 @@ class _EmployeeDialogState extends State<_EmployeeDialog> {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _roleController,
+              DropdownButtonFormField<String>(
+                initialValue: _selectedRole,
                 decoration: const InputDecoration(labelText: 'Role'),
-                validator: (value) {
-                  final text = value?.trim() ?? '';
-                  if (text.isEmpty) return 'Required';
-                  if (text.length < 2) return 'Role must be at least 2 characters';
-                  return null;
-                },
+                hint: const Text('Select role'),
+                items: _roleOptions
+                    .map(
+                      (role) => DropdownMenuItem<String>(
+                        value: role,
+                        child: Text(role),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) => setState(() => _selectedRole = value),
+                validator: (value) => (value == null || value.trim().isEmpty) ? 'Required' : null,
               ),
-              TextFormField(
-                controller: _deptController,
+              DropdownButtonFormField<String>(
+                initialValue: _selectedDepartment,
                 decoration: const InputDecoration(labelText: 'Department'),
+                hint: const Text('Select department'),
+                items: _departmentOptions
+                    .map(
+                      (department) => DropdownMenuItem<String>(
+                        value: department,
+                        child: Text(department),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) => setState(() => _selectedDepartment = value),
               ),
               TextFormField(
                 controller: _emailController,
@@ -353,9 +611,9 @@ class _EmployeeDialogState extends State<_EmployeeDialog> {
       context,
       _EmployeeFormData(
         name: _nameController.text.trim(),
-        role: _roleController.text.trim(),
+        role: _selectedRole!.trim(),
         status: _status,
-        dept: _deptController.text.trim().isEmpty ? null : _deptController.text.trim(),
+        dept: _selectedDepartment,
         email: _emailController.text.trim().isEmpty ? null : _emailController.text.trim(),
         phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
         dateHired: _dateController.text.trim().isEmpty ? null : _dateController.text.trim(),

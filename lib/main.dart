@@ -33,7 +33,7 @@ class PawmilyaApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => DashboardProvider(
             FirestoreService(FirebaseFirestore.instance),
-          )..initialize(),
+          ),
         ),
       ],
       child: MaterialApp(

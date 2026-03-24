@@ -62,7 +62,7 @@ class PetCard extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 status,
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.quicksand(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: AppColors.adoptionGreen,

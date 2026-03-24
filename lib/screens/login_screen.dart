@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/dashboard_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/floating_paws_bg.dart';
 import 'signup_screen.dart';
@@ -62,10 +65,15 @@ class _LoginScreenState extends State<LoginScreen>
 
     setState(() => _isLoading = true);
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+
+      await credential.user?.getIdToken(true);
+
+      if (!mounted) return;
+      await context.read<DashboardProvider>().initialize();
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
@@ -266,7 +274,7 @@ class _LoginScreenState extends State<LoginScreen>
             const SizedBox(height: 4),
             Text(
               'Enter your credentials to access the system',
-              style: GoogleFonts.nunito(
+              style: GoogleFonts.quicksand(
                 fontSize: 13,
                 color: AppColors.textMuted,
               ),
@@ -354,7 +362,7 @@ class _LoginScreenState extends State<LoginScreen>
                           'Remember me',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.nunito(
+                          style: GoogleFonts.quicksand(
                             fontSize: 13,
                             color: AppColors.textMuted,
                           ),
@@ -372,7 +380,7 @@ class _LoginScreenState extends State<LoginScreen>
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.end,
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.quicksand(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: AppColors.primary,
@@ -409,7 +417,7 @@ class _LoginScreenState extends State<LoginScreen>
                     Expanded(
                       child: Text(
                         _errorMessage!,
-                        style: GoogleFonts.nunito(
+                        style: GoogleFonts.quicksand(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFFDC2626),
@@ -493,7 +501,7 @@ class _LoginScreenState extends State<LoginScreen>
               children: [
                 Text(
                   "Don't have an account?",
-                  style: GoogleFonts.nunito(
+                  style: GoogleFonts.quicksand(
                     fontSize: 13,
                     color: AppColors.textMuted,
                   ),
@@ -515,7 +523,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                       child: Text(
                         'Sign Up',
-                        style: GoogleFonts.nunito(
+                        style: GoogleFonts.quicksand(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                           color: AppColors.primary,
@@ -537,7 +545,7 @@ class _LoginScreenState extends State<LoginScreen>
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: GoogleFonts.nunito(
+        style: GoogleFonts.quicksand(
           fontSize: 13,
           fontWeight: FontWeight.w700,
           color: AppColors.textDark,
@@ -560,14 +568,14 @@ class _LoginScreenState extends State<LoginScreen>
       obscureText: obscure,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.nunito(
+      style: GoogleFonts.quicksand(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: AppColors.textDark,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.nunito(
+        hintStyle: GoogleFonts.quicksand(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: AppColors.textMuted.withValues(alpha: 0.4),

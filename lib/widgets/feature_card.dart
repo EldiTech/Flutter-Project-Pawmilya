@@ -61,7 +61,7 @@ class FeatureCard extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.quicksand(
               fontSize: 12,
               color: AppColors.textMuted,
               height: 1.4,

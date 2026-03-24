@@ -608,7 +608,7 @@ class _SignupScreenState extends State<SignupScreen>
           const SizedBox(height: 4),
           Text(
             'Set up your shelter on the Pawmilya platform',
-            style: GoogleFonts.nunito(fontSize: 13, color: AppColors.textMuted),
+            style: GoogleFonts.quicksand(fontSize: 13, color: AppColors.textMuted),
           ),
           const SizedBox(height: 24),
 
@@ -650,7 +650,7 @@ class _SignupScreenState extends State<SignupScreen>
                   Expanded(
                     child: Text(
                       _errorMessage!,
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.quicksand(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFFDC2626),
@@ -677,7 +677,7 @@ class _SignupScreenState extends State<SignupScreen>
             children: [
               Text(
                 'Already registered your shelter?',
-                style: GoogleFonts.nunito(
+                style: GoogleFonts.quicksand(
                   fontSize: 13,
                   color: AppColors.textMuted,
                 ),
@@ -695,7 +695,7 @@ class _SignupScreenState extends State<SignupScreen>
                     ),
                     child: Text(
                       'Log In',
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.quicksand(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
@@ -766,7 +766,7 @@ class _SignupScreenState extends State<SignupScreen>
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.quicksand(
               fontSize: 11,
               fontWeight: FontWeight.w700,
               color: isActive ? AppColors.primary : AppColors.textMuted,
@@ -857,14 +857,14 @@ class _SignupScreenState extends State<SignupScreen>
             TextFormField(
               controller: _mapSearchController,
               onChanged: _onSearchChanged,
-              style: GoogleFonts.nunito(
+              style: GoogleFonts.quicksand(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textDark,
               ),
               decoration: InputDecoration(
                 hintText: 'Search for a place or address...',
-                hintStyle: GoogleFonts.nunito(
+                hintStyle: GoogleFonts.quicksand(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: AppColors.textMuted.withValues(alpha: 0.4),
@@ -976,7 +976,7 @@ class _SignupScreenState extends State<SignupScreen>
                                 Expanded(
                                   child: Text(
                                     r['display_name'] ?? '',
-                                    style: GoogleFonts.nunito(
+                                    style: GoogleFonts.quicksand(
                                       fontSize: 13,
                                       color: AppColors.textDark,
                                     ),
@@ -1112,7 +1112,7 @@ class _SignupScreenState extends State<SignupScreen>
                         const SizedBox(width: 6),
                         Text(
                           'Locate me',
-                          style: GoogleFonts.nunito(
+                          style: GoogleFonts.quicksand(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textMid,
@@ -1159,7 +1159,7 @@ class _SignupScreenState extends State<SignupScreen>
                             'Tap the map to place your shelter pin',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.nunito(
+                            style: GoogleFonts.quicksand(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: AppColors.textMid,
@@ -1221,7 +1221,7 @@ class _SignupScreenState extends State<SignupScreen>
                           children: [
                             Text(
                               'DETECTED ADDRESS',
-                              style: GoogleFonts.nunito(
+                              style: GoogleFonts.quicksand(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 color: AppColors.textMuted,
@@ -1231,7 +1231,7 @@ class _SignupScreenState extends State<SignupScreen>
                             const SizedBox(height: 4),
                             Text(
                               _detectedAddress ?? 'Loading...',
-                              style: GoogleFonts.nunito(
+                              style: GoogleFonts.quicksand(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.textDark,
@@ -1243,7 +1243,7 @@ class _SignupScreenState extends State<SignupScreen>
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Text(
                                   _detectedCoords!,
-                                  style: GoogleFonts.nunito(
+                                  style: GoogleFonts.quicksand(
                                     fontSize: 11,
                                     color: AppColors.textMuted,
                                   ),
@@ -1282,7 +1282,7 @@ class _SignupScreenState extends State<SignupScreen>
                         const SizedBox(width: 8),
                         Text(
                           'Confirm This Location',
-                          style: GoogleFonts.nunito(
+                          style: GoogleFonts.quicksand(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFF16A34A),
@@ -1330,7 +1330,7 @@ class _SignupScreenState extends State<SignupScreen>
                     children: [
                       Text(
                         _confirmedAddress!,
-                        style: GoogleFonts.nunito(
+                        style: GoogleFonts.quicksand(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF15803D),
@@ -1341,7 +1341,7 @@ class _SignupScreenState extends State<SignupScreen>
                         onTap: _resetLocation,
                         child: Text(
                           'Change location',
-                          style: GoogleFonts.nunito(
+                          style: GoogleFonts.quicksand(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFF22C55E),
@@ -1459,7 +1459,7 @@ class _SignupScreenState extends State<SignupScreen>
             alignment: Alignment.centerLeft,
             child: Text(
               _strengthLabel,
-              style: GoogleFonts.nunito(
+              style: GoogleFonts.quicksand(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: _strengthColor,
@@ -1513,7 +1513,7 @@ class _SignupScreenState extends State<SignupScreen>
             Expanded(
               child: Text.rich(
                 TextSpan(
-                  style: GoogleFonts.nunito(
+                  style: GoogleFonts.quicksand(
                     fontSize: 13,
                     color: AppColors.textMuted,
                     height: 1.4,
@@ -1522,7 +1522,7 @@ class _SignupScreenState extends State<SignupScreen>
                     const TextSpan(text: 'I agree to the '),
                     TextSpan(
                       text: 'Terms of Service',
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.quicksand(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
@@ -1531,7 +1531,7 @@ class _SignupScreenState extends State<SignupScreen>
                     const TextSpan(text: ' and '),
                     TextSpan(
                       text: 'Privacy Policy',
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.quicksand(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
@@ -1698,7 +1698,7 @@ class _SignupScreenState extends State<SignupScreen>
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: GoogleFonts.nunito(
+        style: GoogleFonts.quicksand(
           fontSize: 13,
           fontWeight: FontWeight.w700,
           color: AppColors.textDark,
@@ -1723,14 +1723,14 @@ class _SignupScreenState extends State<SignupScreen>
       keyboardType: keyboardType,
       maxLines: obscure ? 1 : maxLines,
       onChanged: onChanged,
-      style: GoogleFonts.nunito(
+      style: GoogleFonts.quicksand(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: AppColors.textDark,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.nunito(
+        hintStyle: GoogleFonts.quicksand(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: AppColors.textMuted.withValues(alpha: 0.4),

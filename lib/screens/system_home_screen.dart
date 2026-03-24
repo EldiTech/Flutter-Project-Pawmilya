@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -49,37 +50,42 @@ class _SystemHomeScreenState extends State<SystemHomeScreen> {
           backgroundColor: AppColors.warmBg,
           appBar: _buildAppBar(profile),
           drawer: _buildDrawer(profile),
-          body: RefreshIndicator(
-            color: AppColors.primary,
-            onRefresh: () async {
-              context.read<DashboardProvider>().initialize();
-            },
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final horizontalPadding = constraints.maxWidth < 600 ? 16.0 : 24.0;
+          body: Stack(
+            children: [
+              const Positioned.fill(child: _AmbientBackdrop()),
+              RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () async {
+                  context.read<DashboardProvider>().initialize();
+                },
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final horizontalPadding = constraints.maxWidth < 600 ? 18.0 : 24.0;
 
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(
-                    horizontalPadding,
-                    16,
-                    horizontalPadding,
-                    24,
-                  ),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1200),
-                      child: _DashboardContent(
-                        stats: stats,
-                        isLoading: provider.isLoading,
-                        errorMessage: provider.error,
-                        firstName: _firstName(profile),
+                    return SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(
+                        horizontalPadding,
+                        14,
+                        horizontalPadding,
+                        26,
                       ),
-                    ),
-                  ),
-                );
-              },
-            ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 1200),
+                          child: _DashboardContent(
+                            stats: stats,
+                            isLoading: provider.isLoading,
+                            errorMessage: provider.error,
+                            firstName: _firstName(profile),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -121,13 +127,14 @@ class _SystemHomeScreenState extends State<SystemHomeScreen> {
     return AppBar(
       elevation: 0,
       scrolledUnderElevation: 0,
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
+      backgroundColor: AppColors.warmBg,
+      surfaceTintColor: AppColors.warmBg,
       leading: IconButton(
         onPressed: () => _mobileScaffoldKey.currentState?.openDrawer(),
-        icon: const Icon(Icons.menu, color: AppColors.textDark),
+        icon: const Icon(Icons.menu_rounded, color: AppColors.textDark, size: 30),
         tooltip: 'Open menu',
       ),
+      leadingWidth: 50,
       titleSpacing: 0,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,17 +143,17 @@ class _SystemHomeScreenState extends State<SystemHomeScreen> {
           Text(
             'System Dashboard',
             style: GoogleFonts.quicksand(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
+              fontSize: 21,
+              fontWeight: FontWeight.w700,
               color: AppColors.textDark,
             ),
           ),
           Text(
             'Shelter operations overview',
-            style: GoogleFonts.nunito(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textMuted,
+            style: GoogleFonts.quicksand(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textMid,
             ),
           ),
         ],
@@ -166,8 +173,6 @@ class _SystemHomeScreenState extends State<SystemHomeScreen> {
   Widget _buildDrawer(ShelterProfile profile) {
     final primaryItems = <({String label, IconData icon})>[
       (label: 'Home', icon: Icons.home_rounded),
-      (label: 'Pets', icon: Icons.pets_rounded),
-      (label: 'Services', icon: Icons.medical_services_rounded),
     ];
 
     final managementItems = <({String label, IconData icon})>[
@@ -194,79 +199,100 @@ class _SystemHomeScreenState extends State<SystemHomeScreen> {
     final managementEndIndex = primaryItems.length + managementItems.length - 1;
 
     return Drawer(
-      backgroundColor: Colors.white,
-      width: 300,
+      backgroundColor: Colors.transparent,
+      width: 304,
       child: SafeArea(
-        child: Column(
-          children: [
-            _DrawerProfileHeader(
-              name: _displayName(profile),
-              email: profile.email.trim().isEmpty ? 'No email available' : profile.email.trim(),
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+          clipBehavior: Clip.antiAlias,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [AppColors.warmBg, AppColors.warmAccent],
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemCount: items.length,
-                separatorBuilder: (context, index) =>
-                    index == primaryEndIndex || index == managementEndIndex
-                    ? const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Divider(height: 1),
-                      )
-                    : const SizedBox(height: 4),
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  return _DrawerNavTile(
-                    icon: item.icon,
-                    label: item.label,
-                    selected: _selectedNavItem == item.label,
-                    onTap: () async {
-                      Navigator.of(context).pop();
-
-                      if (item.label == 'Logout') {
-                        await context.read<DashboardProvider>().stopForSignOut();
-                        await FirebaseAuth.instance.signOut();
-                        if (!context.mounted) return;
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (_) => const LandingScreen()),
-                          (_) => false,
-                        );
-                        return;
-                      }
-
-                      if (!mounted) return;
-                      setState(() => _selectedNavItem = item.label);
-                      await _handleNavigation(item.label);
-                    },
-                  );
-                },
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(26),
+              bottomRight: Radius.circular(26),
+            ),
+          ),
+          child: Column(
+            children: [
+              _DrawerProfileHeader(
+                name: _displayName(profile),
+                email: profile.email.trim().isEmpty ? 'No email available' : profile.email.trim(),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Divider(height: 1),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: Row(
-                children: [
-                  const Icon(Icons.favorite_outline, color: AppColors.textMuted, size: 18),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Pawmilya Admin Panel',
-                      style: GoogleFonts.nunito(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textMuted,
+              const SizedBox(height: 4),
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  itemCount: items.length,
+                  separatorBuilder: (context, index) =>
+                      index == primaryEndIndex || index == managementEndIndex
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Divider(
+                            height: 1,
+                            color: AppColors.warmAccent.withValues(alpha: 0.7),
+                          ),
+                        )
+                      : const SizedBox(height: 4),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return _DrawerNavTile(
+                      icon: item.icon,
+                      label: item.label,
+                      selected: _selectedNavItem == item.label,
+                      onTap: () async {
+                        Navigator.of(context).pop();
+
+                        if (item.label == 'Logout') {
+                          await context.read<DashboardProvider>().stopForSignOut();
+                          await FirebaseAuth.instance.signOut();
+                          if (!context.mounted) return;
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (_) => const LandingScreen()),
+                            (_) => false,
+                          );
+                          return;
+                        }
+
+                        if (!mounted) return;
+                        setState(() => _selectedNavItem = item.label);
+                        await _handleNavigation(item.label);
+                      },
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Divider(
+                  height: 1,
+                  color: AppColors.warmAccent.withValues(alpha: 0.7),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: Row(
+                  children: [
+                    const Icon(Icons.favorite_outline, color: AppColors.textMid, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Pawmilya Admin Panel',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textMid,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -416,10 +442,10 @@ class _DrawerProfileHeader extends StatelessWidget {
     final initial = name.trim().isEmpty ? 'U' : name.trim().characters.first.toUpperCase();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
@@ -427,22 +453,29 @@ class _DrawerProfileHeader extends StatelessWidget {
             colors: [AppColors.primary, AppColors.primaryDark],
           ),
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textDark.withValues(alpha: 0.24),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
         child: Row(
           children: [
             CircleAvatar(
-              radius: 24,
-              backgroundColor: Colors.white.withValues(alpha: 0.25),
+              radius: 22,
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
               child: Text(
                 initial,
                 style: GoogleFonts.quicksand(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 19,
+                  fontWeight: FontWeight.w700,
                   color: Colors.white,
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -452,8 +485,8 @@ class _DrawerProfileHeader extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.quicksand(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
                   ),
@@ -462,9 +495,9 @@ class _DrawerProfileHeader extends StatelessWidget {
                     email,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.nunito(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
@@ -502,38 +535,61 @@ class _DrawerNavTile extends StatelessWidget {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
-            color: Color.lerp(
-              Colors.transparent,
-              AppColors.warmAccent.withValues(alpha: 0.6),
-              value,
-            ),
+            gradient: value > 0
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.primary.withValues(alpha: 0.13),
+                      AppColors.primaryDark.withValues(alpha: 0.2),
+                    ],
+                  )
+                : null,
             borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: value > 0
+                  ? AppColors.primaryDark.withValues(alpha: 0.4)
+                  : AppColors.warmAccent.withValues(alpha: 0.65),
+            ),
           ),
           child: child,
         );
       },
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 1),
+        minLeadingWidth: 34,
+        visualDensity: const VisualDensity(horizontal: -1, vertical: -1),
         leading: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           transitionBuilder: (child, animation) => ScaleTransition(
             scale: animation,
             child: FadeTransition(opacity: animation, child: child),
           ),
-          child: Icon(
-            icon,
+          child: Container(
             key: ValueKey<bool>(selected),
-            color: selected ? AppColors.primary : AppColors.textMuted,
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: selected
+                  ? AppColors.primary.withValues(alpha: 0.14)
+                  : AppColors.warmAccent.withValues(alpha: 0.45),
+            ),
+            child: Icon(
+              icon,
+              size: 17,
+              color: selected ? AppColors.primaryDark : AppColors.textMid,
+            ),
           ),
         ),
         title: AnimatedDefaultTextStyle(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-          style: GoogleFonts.nunito(
+          style: GoogleFonts.quicksand(
             fontSize: 14,
             fontWeight: selected ? FontWeight.w800 : FontWeight.w700,
-            color: selected ? AppColors.primary : AppColors.textDark,
+            color: selected ? AppColors.primaryDark : AppColors.textDark,
           ),
           child: Text(label),
         ),
@@ -571,15 +627,33 @@ class _AnimatedProfileButtonState extends State<_AnimatedProfileButton> {
           setState(() => _pressed = value);
         },
         onTap: widget.onTap,
-        child: CircleAvatar(
-          radius: 18,
-          backgroundColor: AppColors.warmAccent.withValues(alpha: 0.4),
-          child: Text(
-            widget.initial,
-            style: GoogleFonts.nunito(
-              fontSize: 13,
-              fontWeight: FontWeight.w800,
-              color: AppColors.primary,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.primaryLight, AppColors.primaryDark],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.35),
+                blurRadius: 14,
+                spreadRadius: -1,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              widget.initial,
+              style: GoogleFonts.quicksand(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppColors.warmBg,
+              ),
             ),
           ),
         ),
@@ -602,14 +676,14 @@ class _SectionTitle extends StatelessWidget {
         Text(
           title,
           style: GoogleFonts.quicksand(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
+            fontSize: 19,
+            fontWeight: FontWeight.w700,
             color: AppColors.textDark,
           ),
         ),
         Text(
           subtitle,
-          style: GoogleFonts.nunito(
+          style: GoogleFonts.quicksand(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: AppColors.textMuted,
@@ -628,56 +702,196 @@ class _WelcomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryDark],
-        ),
-      ),
-      child: Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 390;
+        final displayName = firstName.trim().isEmpty ? 'User' : firstName.trim();
+
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(isCompact ? 18 : 22),
+          constraints: BoxConstraints(minHeight: isCompact ? 210 : 226),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            color: AppColors.primary,
+            border: Border.all(color: AppColors.primaryDark.withValues(alpha: 0.45)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.textDark.withValues(alpha: 0.27),
+                blurRadius: 22,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: CustomPaint(
+                      painter: _PawTexturePainter(),
+                    ),
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome back,',
+                              style: GoogleFonts.quicksand(
+                                fontSize: isCompact ? 26 : 28,
+                                height: 1.08,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.warmBg,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              displayName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.quicksand(
+                                fontSize: isCompact ? 36 : 40,
+                                height: 1.0,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.warmBg,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: isCompact ? 10 : 14),
+                      Container(
+                        width: isCompact ? 68 : 74,
+                        height: isCompact ? 68 : 74,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [AppColors.primaryLight, AppColors.primaryDark],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryLight.withValues(alpha: 0.45),
+                              blurRadius: 16,
+                              spreadRadius: -2,
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                            child: Container(
+                              color: Colors.white.withValues(alpha: 0.08),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.favorite_rounded,
+                                    color: AppColors.warmBg,
+                                    size: isCompact ? 24 : 28,
+                                  ),
+                                  Icon(
+                                    FontAwesomeIcons.paw,
+                                    color: AppColors.textDark,
+                                    size: isCompact ? 11 : 12,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: isCompact ? 14 : 16),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                    ),
+                    child: Text(
+                      'You have ${stats.pendingApplications} pending applications and ${stats.totalAnimals} animals in care.',
+                      style: GoogleFonts.quicksand(
+                        fontSize: isCompact ? 13.5 : 14,
+                        height: 1.35,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _AmbientBackdrop extends StatelessWidget {
+  const _AmbientBackdrop();
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Stack(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome back, $firstName',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [AppColors.warmBg, AppColors.warmAccent],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'You have ${stats.pendingApplications} pending applications and ${stats.totalAnimals} animals in care.',
-                  style: GoogleFonts.nunito(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white.withValues(alpha: 0.9),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-          const SizedBox(width: 12),
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.22),
-              borderRadius: BorderRadius.circular(16),
+          Positioned(
+            top: -20,
+            left: -70,
+            right: -70,
+            child: Container(
+              height: 180,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.primary.withValues(alpha: 0.25),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
             ),
-            child: const Center(
-              child: FaIcon(
-                FontAwesomeIcons.paw,
-                size: 22,
-                color: Colors.white,
+          ),
+          Positioned(
+            top: 240,
+            right: -40,
+            child: Container(
+              width: 170,
+              height: 170,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.primaryDark.withValues(alpha: 0.14),
+                    Colors.transparent,
+                  ],
+                ),
               ),
             ),
           ),
@@ -685,6 +899,23 @@ class _WelcomeCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _PawTexturePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.055);
+    const spacing = 28.0;
+    for (double y = 10; y < size.height; y += spacing) {
+      for (double x = 10; x < size.width; x += spacing) {
+        canvas.drawCircle(Offset(x, y), 2.1, paint);
+        canvas.drawCircle(Offset(x + 4.5, y + 3), 1.1, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _ProfileCard extends StatelessWidget {
@@ -759,7 +990,7 @@ class _ProfileField extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.warmBg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.06)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.27)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -767,10 +998,10 @@ class _ProfileField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.quicksand(
               fontSize: 11,
               fontWeight: FontWeight.w800,
-              color: AppColors.textMuted,
+              color: AppColors.textMid,
             ),
           ),
           const SizedBox(height: 2),
@@ -778,9 +1009,9 @@ class _ProfileField extends StatelessWidget {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.quicksand(
               fontSize: 13,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: AppColors.textDark,
             ),
           ),
@@ -801,14 +1032,19 @@ class _SectionCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.warmBg, AppColors.warmAccent],
+        ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.06)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textDark.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+            color: AppColors.textDark.withValues(alpha: 0.12),
+            blurRadius: 20,
+            spreadRadius: -2,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -851,7 +1087,7 @@ class _ErrorBanner extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.nunito(
+              style: GoogleFonts.quicksand(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textDark,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../models/pet.dart';
@@ -26,15 +27,31 @@ class _AnimalManagementScreenState extends State<AnimalManagementScreen> {
     return Scaffold(
       backgroundColor: AppColors.warmBg,
       appBar: AppBar(
-        title: const Text('Animal Management'),
+        title: Text(
+          'Animal Management',
+          style: GoogleFonts.quicksand(
+            color: AppColors.textDark,
+            fontSize: 26,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.2,
+          ),
+        ),
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 0,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openPetDialog(),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        elevation: 10,
+        extendedPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         icon: const Icon(Icons.add),
-        label: const Text('Add Animal'),
+        label: Text(
+          'Add Animal',
+          style: GoogleFonts.quicksand(fontWeight: FontWeight.w700, fontSize: 17),
+        ),
       ),
       body: Consumer<DashboardProvider>(
         builder: (context, provider, _) {
@@ -50,58 +67,127 @@ class _AnimalManagementScreenState extends State<AnimalManagementScreen> {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: AppColors.textMid.withValues(alpha: 0.9),
+                    ),
                     hintText: 'Search animals',
+                    hintStyle: GoogleFonts.quicksand(
+                      color: AppColors.textMuted,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.warmAccent.withValues(alpha: 0.75)),
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.warmAccent.withValues(alpha: 0.75)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.45), width: 1.2),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
                   ),
                   onChanged: (_) => setState(() {}),
                 ),
               ),
               Expanded(
                 child: pets.isEmpty
-                    ? const Center(child: Text('No animals found.'))
+                    ? Center(
+                        child: Text(
+                          'No animals found.',
+                          style: GoogleFonts.quicksand(
+                            color: AppColors.textMuted,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      )
                     : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 104),
                         itemCount: pets.length,
                         itemBuilder: (context, index) {
                           final pet = pets[index];
-                          return Card(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 14),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(color: AppColors.warmAccent.withValues(alpha: 0.6)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.textDark.withValues(alpha: 0.08),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
                             ),
-                            child: ListTile(
-                              title: Text(pet.name),
-                              subtitle: Text(
-                                '${pet.species} • ${pet.breed} • ${pet.gender} • ${pet.age}',
-                              ),
-                              trailing: Wrap(
-                                spacing: 8,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  Chip(
-                                    label: Text(pet.status),
-                                    visualDensity: VisualDensity.compact,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _PetPortrait(name: pet.name),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        pet.name,
+                                        style: GoogleFonts.quicksand(
+                                          color: AppColors.textDark,
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.05,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '${pet.species} • ${pet.breed}',
+                                        style: GoogleFonts.quicksand(
+                                          color: AppColors.textDark,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        '${pet.gender} • ${pet.age}',
+                                        style: GoogleFonts.quicksand(
+                                          color: AppColors.textMuted,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        children: [
+                                          _StatusPill(status: pet.status),
+                                          const Spacer(),
+                                          _ActionIcon(
+                                            icon: Icons.edit_outlined,
+                                            onTap: () => _openPetDialog(existing: pet),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          _ActionIcon(
+                                            icon: Icons.delete_outline,
+                                            onTap: () => _deletePet(pet),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                  IconButton(
-                                    onPressed: () => _openPetDialog(existing: pet),
-                                    icon: const Icon(Icons.edit_outlined),
-                                  ),
-                                  IconButton(
-                                    onPressed: () => _deletePet(pet),
-                                    icon: const Icon(Icons.delete_outline),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -188,6 +274,86 @@ class _AnimalManagementScreenState extends State<AnimalManagementScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
+  }
+}
+
+class _PetPortrait extends StatelessWidget {
+  const _PetPortrait({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final initial = name.trim().isEmpty ? '?' : name.trim().characters.first.toUpperCase();
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.warmAccent.withValues(alpha: 0.9), width: 1.3),
+      ),
+      child: CircleAvatar(
+        radius: 38,
+        backgroundColor: AppColors.warmAccent.withValues(alpha: 0.45),
+        child: Text(
+          initial,
+          style: GoogleFonts.quicksand(
+            color: AppColors.textDark,
+            fontSize: 33,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.warmBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.28)),
+      ),
+      child: Text(
+        status,
+        style: GoogleFonts.quicksand(
+          color: AppColors.textDark,
+          fontWeight: FontWeight.w800,
+          fontSize: 15,
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionIcon extends StatelessWidget {
+  const _ActionIcon({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: AppColors.warmBg,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: AppColors.textDark, size: 21),
+      ),
+    );
   }
 }
 

@@ -198,7 +198,7 @@ class _SplashScreenState extends State<SplashScreen>
                             child: Text(
                               'Shelter Management System',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.nunito(
+                              style: GoogleFonts.quicksand(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.textMuted,

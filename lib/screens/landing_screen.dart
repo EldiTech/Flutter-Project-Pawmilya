@@ -197,7 +197,7 @@ class _LandingScreenState extends State<LandingScreen>
                             const SizedBox(height: 8),
                             Text(
                               'Shelter Management System',
-                              style: GoogleFonts.nunito(
+                              style: GoogleFonts.quicksand(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textMuted,
@@ -223,7 +223,7 @@ class _LandingScreenState extends State<LandingScreen>
                             Text(
                               'Every paw deserves a loving home.',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.nunito(
+                              style: GoogleFonts.quicksand(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 fontStyle: FontStyle.italic,
@@ -281,7 +281,7 @@ class _LandingScreenState extends State<LandingScreen>
                       opacity: _buttonFade,
                       child: Text(
                         'v1.0.0',
-                        style: GoogleFonts.nunito(
+                        style: GoogleFonts.quicksand(
                           fontSize: 12,
                           color: AppColors.textMuted.withValues(alpha: 0.6),
                         ),

@@ -61,7 +61,7 @@ class DashboardHeader extends StatelessWidget {
                       subtitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.nunito(
+                      style: GoogleFonts.quicksand(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textMuted,
@@ -97,7 +97,7 @@ class DashboardHeader extends StatelessWidget {
                             subtitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.nunito(
+                            style: GoogleFonts.quicksand(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: AppColors.textMuted,

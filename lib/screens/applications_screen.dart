@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../models/adoption_application.dart';
@@ -14,10 +18,14 @@ class ApplicationsScreen extends StatefulWidget {
 
 class _ApplicationsScreenState extends State<ApplicationsScreen> {
   final TextEditingController _searchController = TextEditingController();
+  OverlayEntry? _toastEntry;
+  Timer? _toastTimer;
 
   @override
   void dispose() {
     _searchController.dispose();
+    _toastTimer?.cancel();
+    _toastEntry?.remove();
     super.dispose();
   }
 
@@ -26,15 +34,31 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
     return Scaffold(
       backgroundColor: AppColors.warmBg,
       appBar: AppBar(
-        title: const Text('Applications'),
+        title: Text(
+          'Applications',
+          style: GoogleFonts.quicksand(
+            color: AppColors.textDark,
+            fontSize: 26,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.15,
+          ),
+        ),
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 0,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openApplicationDialog,
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        elevation: 10,
+        extendedPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         icon: const Icon(Icons.add),
-        label: const Text('Add Application'),
+        label: Text(
+          'Add Application',
+          style: GoogleFonts.quicksand(fontWeight: FontWeight.w700, fontSize: 17),
+        ),
       ),
       body: Consumer<DashboardProvider>(
         builder: (context, provider, _) {
@@ -50,64 +74,147 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: AppColors.textMid.withValues(alpha: 0.9),
+                    ),
                     hintText: 'Search applications',
+                    hintStyle: GoogleFonts.quicksand(
+                      color: AppColors.textMuted,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.warmAccent.withValues(alpha: 0.7)),
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.warmAccent.withValues(alpha: 0.7)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.42), width: 1.2),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
                   ),
                   onChanged: (_) => setState(() {}),
                 ),
               ),
               Expanded(
                 child: applications.isEmpty
-                    ? const Center(child: Text('No applications found.'))
+                    ? Center(
+                        child: Text(
+                          'No applications found.',
+                          style: GoogleFonts.quicksand(
+                            color: AppColors.textMuted,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      )
                     : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
                         itemCount: applications.length,
                         itemBuilder: (context, index) {
                           final app = applications[index];
-                          return Card(
-                            color: Colors.white,
-                            child: ListTile(
-                              title: Text(app.applicant),
-                              subtitle: Text('${app.animal} • ${app.date ?? 'No date'}'),
-                              trailing: Wrap(
-                                spacing: 6,
-                                children: [
-                                  Chip(
-                                    label: Text(app.status),
-                                    visualDensity: VisualDensity.compact,
-                                  ),
-                                  if (app.status == 'Pending')
-                                    IconButton(
-                                      tooltip: 'Approve',
-                                      icon: const Icon(Icons.check_circle_outline),
-                                      onPressed: () => _changeStatus(app.id, 'Approved'),
+                          final dateLabel = app.date?.isNotEmpty == true ? app.date! : 'No date';
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 14),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(color: AppColors.warmAccent.withValues(alpha: 0.58)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.textDark.withValues(alpha: 0.07),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 9),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Applicant Name',
+                                            style: GoogleFonts.quicksand(
+                                              color: AppColors.textMuted,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 0.45,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            app.applicant,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.quicksand(
+                                              color: AppColors.textDark,
+                                              fontSize: 31,
+                                              fontWeight: FontWeight.w600,
+                                              height: 1,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 9),
+                                          Text(
+                                            'Pet Name',
+                                            style: GoogleFonts.quicksand(
+                                              color: AppColors.textMuted,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 0.45,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          Text(
+                                            '${app.animal} • $dateLabel',
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.quicksand(
+                                              color: AppColors.textMid,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  if (app.status == 'Pending')
-                                    IconButton(
-                                      tooltip: 'Reject',
-                                      icon: const Icon(Icons.cancel_outlined),
-                                      onPressed: () => _changeStatus(app.id, 'Rejected'),
-                                    ),
-                                  IconButton(
-                                    onPressed: () => _openApplicationDialog(existing: app),
-                                    icon: const Icon(Icons.edit_outlined),
+                                    const SizedBox(width: 12),
+                                    _ApplicationStatusBadge(status: app.status),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: _QuickActionsTray(
+                                    onApprove: app.status == 'Pending'
+                                        ? () => _changeStatus(app.id, 'Approved')
+                                        : null,
+                                    onReject: app.status == 'Pending'
+                                        ? () => _changeStatus(app.id, 'Rejected')
+                                        : null,
+                                    onEdit: () => _openApplicationDialog(existing: app),
+                                    onDelete: () => _deleteApplication(app),
                                   ),
-                                  IconButton(
-                                    onPressed: () => _deleteApplication(app),
-                                    icon: const Icon(Icons.delete_outline),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -199,9 +306,219 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    final isSuccess = !message.toLowerCase().startsWith('failed');
+
+    _toastTimer?.cancel();
+    _toastEntry?.remove();
+
+    final overlay = Overlay.of(context);
+    if (overlay.mounted == false) return;
+
+    _toastEntry = OverlayEntry(
+      builder: (context) {
+        return Positioned(
+          left: 16,
+          right: 16,
+          bottom: 30,
+          child: SafeArea(
+            child: _FrostedStatusToast(
+              message: message,
+              isSuccess: isSuccess,
+            ),
+          ),
+        );
+      },
+    );
+
+    overlay.insert(_toastEntry!);
+    _toastTimer = Timer(const Duration(seconds: 3), () {
+      _toastEntry?.remove();
+      _toastEntry = null;
+    });
+  }
+}
+
+class _ApplicationStatusBadge extends StatelessWidget {
+  const _ApplicationStatusBadge({required this.status});
+
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    final normalized = status.toLowerCase();
+
+    final Color textColor;
+    final Color fillColor;
+    final Color borderColor;
+
+    if (normalized == 'approved') {
+      textColor = AppColors.adoptionGreen.withValues(alpha: 0.95);
+      fillColor = AppColors.adoptionGreen.withValues(alpha: 0.12);
+      borderColor = AppColors.adoptionGreen.withValues(alpha: 0.35);
+    } else if (normalized == 'pending') {
+      textColor = AppColors.textMid;
+      fillColor = AppColors.warmAccent.withValues(alpha: 0.34);
+      borderColor = AppColors.primary.withValues(alpha: 0.28);
+    } else {
+      textColor = AppColors.textMuted;
+      fillColor = AppColors.warmBg;
+      borderColor = AppColors.warmAccent.withValues(alpha: 0.9);
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: fillColor,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: borderColor),
+      ),
+      child: Text(
+        status,
+        style: GoogleFonts.quicksand(
+          color: textColor,
+          fontSize: 15,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickActionsTray extends StatelessWidget {
+  const _QuickActionsTray({
+    required this.onEdit,
+    required this.onDelete,
+    this.onApprove,
+    this.onReject,
+  });
+
+  final VoidCallback? onApprove;
+  final VoidCallback? onReject;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.warmBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.warmAccent.withValues(alpha: 0.75)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (onApprove != null)
+            _TrayActionButton(
+              icon: Icons.check_circle_outline,
+              tooltip: 'Approve',
+              onTap: onApprove!,
+            ),
+          if (onReject != null)
+            _TrayActionButton(
+              icon: Icons.cancel_outlined,
+              tooltip: 'Reject',
+              onTap: onReject!,
+            ),
+          _TrayActionButton(
+            icon: Icons.edit_outlined,
+            tooltip: 'Edit',
+            onTap: onEdit,
+          ),
+          _TrayActionButton(
+            icon: Icons.delete_outline,
+            tooltip: 'Delete',
+            onTap: onDelete,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrayActionButton extends StatelessWidget {
+  const _TrayActionButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          width: 36,
+          height: 36,
+          alignment: Alignment.center,
+          child: Icon(icon, size: 22, color: AppColors.textDark),
+        ),
+      ),
+    );
+  }
+}
+
+class _FrostedStatusToast extends StatelessWidget {
+  const _FrostedStatusToast({required this.message, required this.isSuccess});
+
+  final String message;
+  final bool isSuccess;
+
+  @override
+  Widget build(BuildContext context) {
+    final iconColor = isSuccess
+      ? AppColors.adoptionGreen.withValues(alpha: 0.95)
+      : AppColors.primaryDark.withValues(alpha: 0.95);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.72),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.warmAccent.withValues(alpha: 0.78)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.textDark.withValues(alpha: 0.16),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(
+                isSuccess ? Icons.check_circle_rounded : Icons.error_outline_rounded,
+                color: iconColor,
+                size: 22,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: GoogleFonts.quicksand(
+                    color: AppColors.textDark,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

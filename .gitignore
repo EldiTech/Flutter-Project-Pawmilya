@@ -79,9 +79,6 @@ app.*.map.json
 .env.*
 *.env
 
-# Accidental chat/clipboard image drops
-**/file.png
-
 # Local Firebase config for this app
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist

@@ -44,7 +44,7 @@ class ActivityChartCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             'Animals, applications, pending, and adoptions snapshot',
-            style: GoogleFonts.nunito(
+            style: GoogleFonts.quicksand(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: AppColors.textMuted,
@@ -79,7 +79,7 @@ class ActivityChartCard extends StatelessWidget {
                       reservedSize: 32,
                       getTitlesWidget: (value, meta) => Text(
                         value.toInt().toString(),
-                        style: GoogleFonts.nunito(
+                        style: GoogleFonts.quicksand(
                           fontSize: 10,
                           color: AppColors.textMuted,
                           fontWeight: FontWeight.w700,
@@ -97,7 +97,7 @@ class ActivityChartCard extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 8),
                           child: Text(
                             idx >= 0 && idx < labels.length ? labels[idx] : '',
-                            style: GoogleFonts.nunito(
+                            style: GoogleFonts.quicksand(
                               fontSize: 10,
                               color: AppColors.textMuted,
                               fontWeight: FontWeight.w700,

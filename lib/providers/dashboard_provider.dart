@@ -74,13 +74,13 @@ class DashboardProvider extends ChangeNotifier {
     );
   }
 
-  void initialize() {
+  Future<void> initialize() async {
     _isSigningOut = false;
     _isLoading = true;
     _error = null;
     notifyListeners();
 
-    _cancelSubscriptions();
+    await _cancelSubscriptions();
 
     _petsSub = _service.watchPets().listen(
       (data) {
