@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "576648355848",
+    "project_id": "pawmilya-flutter",
+    "storage_bucket": "pawmilya-flutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576648355848:android:acdfe2bf5f9462b74271bd",
+        "android_client_info": {
+          "package_name": "pawmilya.flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFg_TfplW4sk20b6cYIzQ1Xja9HcXhDkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

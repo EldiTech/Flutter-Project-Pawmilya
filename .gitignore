@@ -43,45 +43,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-/android/build/
-/android/app/build/
 
-# Flutter generated/plugin files
-.flutter-plugins
-.packages
-
-# Flutter platform ephemeral/generated directories
-**/android/local.properties
-**/android/.gradle/
-**/android/captures/
-**/android/**/GeneratedPluginRegistrant.java
-**/ios/Flutter/ephemeral/
-**/ios/Flutter/Generated.xcconfig
-**/ios/Flutter/flutter_export_environment.sh
-**/macos/Flutter/ephemeral/
-**/linux/flutter/ephemeral/
-**/windows/flutter/ephemeral/
-
-# Dart generated
-*.g.dart
-*.freezed.dart
-
-# Local secrets / signing files (keep out of Git)
-**/key.properties
-**/*.jks
-**/*.keystore
-**/*.p12
-**/*.p8
-**/*.pem
-**/*serviceAccount*.json
-**/*credentials*.json
-
-# Environment files
+# Environment files (secrets)
 .env
 .env.*
-*.env
 
-# Local Firebase config for this app
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
-lib/firebase_options.dart
+# Node / Firebase Functions
+**/node_modules/
+.firebase/
+firebase-debug.log

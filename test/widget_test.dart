@@ -6,12 +6,11 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:pawmilya_app/main.dart';
+import 'package:flutter_enchance/app/pawmilya_app.dart';
 
 void main() {
-  testWidgets('App renders smoke test', (WidgetTester tester) async {
+  testWidgets('App shell loads landing page', (WidgetTester tester) async {
     await tester.pumpWidget(const PawmilyaApp());
-    expect(find.text('Pawmilya'), findsWidgets);
+    expect(find.text('Pawmilya'), findsOneWidget);
   });
 }
